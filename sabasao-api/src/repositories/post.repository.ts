@@ -1,4 +1,4 @@
-import dataSource from "../config/database";
+import {dataSource} from "../config/database";
 import { Post } from "../models";
 
 export interface IPostPayload {

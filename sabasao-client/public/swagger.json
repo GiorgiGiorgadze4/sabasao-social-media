@@ -80,12 +80,6 @@
 					"email": {
 						"type": "string"
 					},
-					"username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
 					"posts": {
 						"items": {
 							"$ref": "#/components/schemas/Post"
@@ -112,8 +106,6 @@
 					"firstName",
 					"lastName",
 					"email",
-					"username",
-					"password",
 					"posts",
 					"comments",
 					"createdAt",
@@ -177,20 +169,12 @@
 					},
 					"email": {
 						"type": "string"
-					},
-					"username": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"firstName",
 					"lastName",
-					"email",
-					"username",
-					"password"
+					"email"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -399,160 +383,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/users/register": {
-			"post": {
-				"operationId": "Register",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/User"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"password": {
-										"type": "string"
-									},
-									"username": {
-										"type": "string"
-									},
-									"email": {
-										"type": "string"
-									},
-									"lastName": {
-										"type": "string"
-									},
-									"firstName": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"password",
-									"username",
-									"email",
-									"lastName",
-									"firstName"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/users/login": {
-			"post": {
-				"operationId": "Login",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"user": {
-											"$ref": "#/components/schemas/User"
-										},
-										"token": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"user",
-										"token"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"password": {
-										"type": "string"
-									},
-									"username": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"password",
-									"username"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/users/reset-password": {
-			"post": {
-				"operationId": "ResetPassword",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"newPassword": {
-										"type": "string"
-									},
-									"oldPassword": {
-										"type": "string"
-									},
-									"userId": {
-										"type": "number",
-										"format": "double"
-									}
-								},
-								"required": [
-									"newPassword",
-									"oldPassword",
-									"userId"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/comments": {

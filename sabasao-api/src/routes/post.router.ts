@@ -6,12 +6,14 @@ const router = express.Router();
 router.get("/", async (_req, res) => {
   const controller = new PostController();
   const response = await controller.getPosts();
+  console.log("getio ar");
   return res.send(response);
 });
 
 router.post("/", async (req, res) => {
   const controller = new PostController();
   const response = await controller.createPost(req.body);
+  console.log("movida?");
   return res.send(response);
 });
 

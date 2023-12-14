@@ -1,138 +1,100 @@
-// App.tsx
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { createPost, fetchPosts } from "./api/posts.service";
+import { ICreatePostData } from "./interfaces/createPostData";
+import { IPost } from "./interfaces/post";
+import Login from "./components/auth/Login";
+import Register from './components/auth/register';
+import Header from './components/common/Header';
+import CreatePost from './components/feed/CreatePost';
+import Feed from './components/feed/Feed';
+import NavigationSidebar from './components/common/NavigationSidebar';
+import { loginUser } from "./api/posts.service";
+//import RightSidebar from './components/common/RightSidebar'; // Uncomment if RightSidebar is implemented
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "./App.css";
 
-// Updated types
-type Profile = {
-  firstName: string;
-  lastName: string;
-  email: string;
-};
-
-type Post = {
-  content: string;
-  userId: number;
-  postId: number;
-};
-
-type Friend = {
-  name: string;
-  occupation: string;
-};
-
-// Sample initial data
-const userProfile: Profile = {
-  firstName: 'Steve',
-  lastName: 'Ralph',
-  email: 'steve.ralph@example.com',
-};
-
-const userPosts: Post[] = [
-  // ...initial posts
-];
-
-const userFriends: Friend[] = [
-  // ...initial friends
-];
-
-// The main App component
 const App: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>(userPosts);
+  const [posts, setPosts] = useState<IPost[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleCreatePost = (content: string) => {
-    const newPost: Post = {
-      content,
-      userId: 1, // This should be the ID of the user creating the post
-      postId: Math.random(), // This should be a unique identifier for the post
-    };
-    setPosts([newPost, ...posts]);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token === 'ok') {
+      setIsLoggedIn(true);
+    }
+    setIsLoading(false);
 
-  return (
-    <div className="app">
-      <Header />
-      <CreatePost onPostCreate={handleCreatePost} />
-      <div className="main-content">
-        <NavigationSidebar />
-        <Feed posts={posts} />
-        <RightSidebar friends={userFriends} />
-      </div>
-    </div>
-  );
-};
+    // Fetch posts from local storage
+    const storedPosts = localStorage.getItem('posts');
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
+    }
+  }, []);
 
-// Header component
-const Header: React.FC = () => {
-  return (
-    <header className="header">
-      {/* Insert your header content here */}
-    </header>
-  );
-};
-
-// CreatePost component
-const CreatePost: React.FC<{ onPostCreate: (content: string) => void }> = ({ onPostCreate }) => {
-  const [postContent, setPostContent] = useState('');
-
-  const handleSubmit = () => {
-    if (postContent.trim()) {
-      onPostCreate(postContent);
-      setPostContent('');
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      await loginUser(username, password);
+      localStorage.setItem('token', 'ok'); // Manually setting the token for testing
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 
-  return (
-    <div className="create-post">
-      <textarea
-        value={postContent}
-        onChange={(e) => setPostContent(e.target.value)}
-        placeholder="What's on your mind..."
-      />
-      <button onClick={handleSubmit}>Post</button>
-    </div>
-  );
-};
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+  };
 
-// Feed component
-const Feed: React.FC<{ posts: Post[] }> = ({ posts }) => {
-  return (
-    <div className="feed">
-      {posts.map((post, index) => (
-        <div key={post.postId} className="post">
-          <div className="post-content">{post.content}</div>
-          {/* Placeholder for user info - should be fetched or passed down */}
-          <div className="post-user-info">Posted by user ID {post.userId}</div>
-        </div>
-      ))}
-    </div>
-  );
-};
+  const handleCreatePost = async (title: string, content: string) => {
+    const newPostData: ICreatePostData = { title, content };
+    try {
+      const createdPost = await createPost(newPostData, "ok"); // Use the token here if needed
+      const updatedPosts = [createdPost, ...posts];
+      setPosts(updatedPosts);
 
-// NavigationSidebar component
-const NavigationSidebar: React.FC = () => {
-  return (
-    <nav className="navigation-sidebar">
-      {/* Navigation links and user profile summary */}
-    </nav>
-  );
-};
+      // Save posts to local storage
+      localStorage.setItem('posts', JSON.stringify(updatedPosts));
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
+  };
 
-// RightSidebar component
-const RightSidebar: React.FC<{ friends: Friend[] }> = ({ friends }) => {
+  if (isLoading) {
+    return <div>Loading...</div>; 
+  }
+
   return (
-    <aside className="right-sidebar">
-      <div className="sponsored-content">
-        {/* Sponsored ads content */}
+    <Router>
+      <div className="app">
+        <Switch>
+          <Route path="/register">
+            <Register />
+          </Route>
+          <Route path="/login">
+            <Login onLogin={handleLogin} />
+          </Route>
+          <Route exact path="/">
+            {isLoggedIn ? (
+              <>
+                <Header onLogout={handleLogout} />
+                <CreatePost onPostCreate={handleCreatePost} />
+                <div className="main-content">
+                  <NavigationSidebar />
+                  <Feed posts={posts} />
+                  {/* Uncomment the line below when RightSidebar is implemented */}
+                  {/* <RightSidebar friends={userFriends} /> */}
+                </div>
+              </>
+            ) : (
+              <Redirect to="/login" />
+            )}
+          </Route>
+        </Switch>
       </div>
-      <ul className="friend-list">
-        {friends.map((friend, index) => (
-          <li key={index} className="friend">
-            <div className="friend-name">{friend.name}</div>
-            <div className="friend-occupation">{friend.occupation}</div>
-          </li>
-        ))}
-      </ul>
-    </aside>
+    </Router>
   );
 };
 

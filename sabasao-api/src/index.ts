@@ -2,12 +2,12 @@ import 'reflect-metadata';
 import http from 'http';
 import bodyParser from 'body-parser';
 import express from 'express';
-
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import Router from './routes';
-import dataSource from './config/database';
 import 'dotenv/config';
+import { dataSource } from './config/database';
+
 console.log("ko");
 const app = express();
 
@@ -65,7 +65,7 @@ app.use((req, res, next) => {
 
 // Start the server
 const httpServer = http.createServer(app);
-const PORT = process.env.PORT || 8000; // Assuming there is a config.server.port in your configuration
+const PORT = process.env.PORT || 8000; 
 
 httpServer.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
