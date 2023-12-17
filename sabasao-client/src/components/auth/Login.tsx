@@ -18,7 +18,7 @@ const Login: React.FC<{ onLogin: (username: string, password: string) => void }>
       const userData = await loginUser(username, password);
       // Handle successful login, such as storing the token and redirecting the user
       // Example: localStorage.setItem('userToken', userData.token);
-      onLogin(username, password);
+      await onLogin(username, password);
       console.log(username,password);
       history.push('/'); // Redirect to a dashboard or other page
     } catch (error) {
