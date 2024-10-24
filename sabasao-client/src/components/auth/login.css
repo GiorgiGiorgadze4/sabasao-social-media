@@ -1,9 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap");
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
-
+.form {
+  display: flex;
+  gap: 12px;
+}
 .login-container {
   max-width: 400px;
   margin: auto;
@@ -21,9 +24,8 @@ body {
   flex-direction: column;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
+/* .form-group {
+  /* margin-bottom: 20px; */
 
 .form-group input {
   border: 1px solid #ccc;
@@ -31,9 +33,9 @@ body {
   padding: 10px;
   font-size: 16px;
 }
-
-.button, .btn {
-  margin-top: 15px;
+.button,
+.btn {
+  margin-top: 6px;
   padding: 10px 0;
   font-size: 16px;
   border-radius: 5px;
@@ -44,6 +46,7 @@ body {
   background-color: #007bff;
   color: white;
   border: none;
+  /* margin-top: 0px; */
 }
 
 .btn-primary:hover {

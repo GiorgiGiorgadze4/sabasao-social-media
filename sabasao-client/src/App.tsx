@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import { createPost, fetchPosts } from "./api/posts.service";
 import { ICreatePostData } from "./interfaces/createPostData";
 import { IPost } from "./interfaces/post";
 import Login from "./components/auth/Login";
-import Register from './components/auth/register';
-import Header from './components/common/Header';
-import CreatePost from './components/feed/CreatePost';
-import Feed from './components/feed/Feed';
-import NavigationSidebar from './components/common/NavigationSidebar';
+import Register from "./components/auth/register";
+import Header from "./components/common/Header";
+import { IloggedUser } from "./interfaces/user";
+import CreatePost from "./components/feed/CreatePost";
+import Feed from "./components/feed/Feed";
+import NavigationSidebar from "./components/common/NavigationSidebar";
 import { loginUser } from "./api/posts.service";
-//import RightSidebar from './components/common/RightSidebar'; // Uncomment if RightSidebar is implemented
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useDispatch, useSelector } from "react-redux"; // Import useDispatch and useSelector
+import { RootState } from "./store/store"; // Import RootState for type safety
+
+import { setUser } from "./store/userSlice"; // Import the setUser action
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
 const App: React.FC = () => {
@@ -19,24 +28,39 @@ const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const dispatch = useDispatch(); // Initialize dispatch for Redux actions
+  const user = useSelector((state: RootState) => state.user.user); // Access user data from Redux store
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token === 'ok') {
+    console.log("Updated user:", user);
+  }, [user]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token === "ok") {
       setIsLoggedIn(true);
     }
     setIsLoading(false);
 
-    // Fetch posts from local storage
-    const storedPosts = localStorage.getItem('posts');
-    if (storedPosts) {
-      setPosts(JSON.parse(storedPosts));
-    }
+    const loadPosts = async () => {
+      try {
+        const fetchedPosts = await fetchPosts();
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error("Error loading posts:", error);
+      }
+    };
+
+    loadPosts();
   }, []);
 
   const handleLogin = async (username: string, password: string) => {
     try {
-      await loginUser(username, password);
-      localStorage.setItem('token', 'ok'); // Manually setting the token for testing
+      const userDataLoad = await loginUser(username, password);
+      // Dispatch the user data to the Redux store
+      dispatch(setUser(userDataLoad.user)); // Set the logged-in user globally
+      console.log("User logged in:", user); // Log the user from Redux state after dispatch
+
+      localStorage.setItem("token", "ok");
       setIsLoggedIn(true);
     } catch (error) {
       console.error("Login failed:", error);
@@ -44,26 +68,24 @@ const App: React.FC = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
+    dispatch(setUser(null)); // Clear user data by setting it to null
     setIsLoggedIn(false);
   };
 
   const handleCreatePost = async (title: string, content: string) => {
     const newPostData: ICreatePostData = { title, content };
     try {
-      const createdPost = await createPost(newPostData, "ok"); // Use the token here if needed
+      const createdPost = await createPost(newPostData, "ok");
       const updatedPosts = [createdPost, ...posts];
       setPosts(updatedPosts);
-
-      // Save posts to local storage
-      localStorage.setItem('posts', JSON.stringify(updatedPosts));
     } catch (error) {
       console.error("Error creating post:", error);
     }
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -84,8 +106,6 @@ const App: React.FC = () => {
                 <div className="main-content">
                   <NavigationSidebar />
                   <Feed posts={posts} />
-                  {/* Uncomment the line below when RightSidebar is implemented */}
-                  {/* <RightSidebar friends={userFriends} /> */}
                 </div>
               </>
             ) : (

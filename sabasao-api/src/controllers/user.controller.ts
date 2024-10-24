@@ -1,13 +1,13 @@
 import { Get, Route, Tags, Post, Body, Path } from "tsoa";
 import { User } from "../models";
-import { 
-  getUsers, 
-  createUser, 
-  IUserPayload, 
+import {
+  getUsers,
+  createUser,
+  IUserPayload,
   getUser,
   registerUser,
   findUserByUsername,
-  updateUserPassword
+  updateUserPassword,
 } from "../repositories/user";
 import bcryptjs from "bcryptjs";
 import signJWT from "../functions/signJWT";
@@ -31,35 +31,40 @@ export default class UserController {
   }
 
   @Post("/register")
-  public async register(@Body() body: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    username: string;
-    password: string;
-  }): Promise<User> {
+  public async register(
+    @Body()
+    body: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      username: string;
+      password: string;
+    }
+  ): Promise<User> {
     return registerUser(body);
   }
   @Post("/login")
-public async login(@Body() body: { username: string; password: string }): Promise<{ token: string; user: User }> {
-  return new Promise(async (resolve, reject) => {
-    const user = await findUserByUsername(body.username);
-    if (!user) {
-      reject(new Error('User not found'));
-      return;
-    }
+  public async login(
+    @Body() body: { username: string; password: string }
+  ): Promise<{ token: string; user: User }> {
+    return new Promise(async (resolve, reject) => {
+      const user = await findUserByUsername(body.username);
+      if (!user) {
+        reject(new Error("User not found"));
+        return;
+      }
 
-    const match = await bcryptjs.compare(body.password, user.password);
-    if (!match) {
-      reject(new Error('Password mismatch'));
-      return;
-    }
+      const match = await bcryptjs.compare(body.password, user.password);
+      if (!match) {
+        reject(new Error("Password mismatch"));
+        return;
+      }
 
-    // For testing, return a static token instead of signing a JWT
-    const staticToken = "ok"; 
-    resolve({ token: staticToken, user });
-  });
-}
+      // For testing, return a static token instead of signing a JWT
+      const staticToken = "ok";
+      resolve({ token: staticToken, user });
+    });
+  }
 
   // @Post("/login")
   // public async login(@Body() body: { username: string; password: string }): Promise<{ token: string; user: User }> {
@@ -89,17 +94,17 @@ public async login(@Body() body: { username: string; password: string }): Promis
   // }
 
   @Post("/reset-password")
-  public async resetPassword(@Body() body: { userId: number; oldPassword: string; newPassword: string }): Promise<void> {
+  public async resetPassword(
+    @Body() body: { userId: number; oldPassword: string; newPassword: string }
+  ): Promise<void> {
     const user = await getUser(body.userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
     const match = await bcryptjs.compare(body.oldPassword, user.password);
     if (!match) {
-      throw new Error('Old password does not match');
+      throw new Error("Old password does not match");
     }
     await updateUserPassword(body.userId, body.newPassword);
   }
-
- 
 }
