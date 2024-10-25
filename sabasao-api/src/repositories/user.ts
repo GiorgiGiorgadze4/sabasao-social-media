@@ -1,9 +1,8 @@
 import { User } from "../models";
-import {dataSource} from "../config/database";
+import { dataSource } from "../config/database";
 import { UserRepository } from "./user.repository";
-import bcryptjs from 'bcryptjs';
+import bcryptjs from "bcryptjs";
 export interface IUserPayload {
-  
   firstName: string;
   lastName: string;
   email: string;
@@ -21,7 +20,7 @@ export const createUser = async (payload: IUserPayload): Promise<User> => {
   const user = new User();
   const hashedPassword = await bcryptjs.hash(payload.password, 10);
   user.firstName = payload.firstName;
-  console.log(payload.lastName,"user damateba test")
+  console.log(payload.lastName, "user damateba test");
   user.lastName = payload.lastName; // Set the "lastName" field from the payload
   user.email = payload.email;
   user.username = payload.username;
@@ -32,7 +31,7 @@ export const createUser = async (payload: IUserPayload): Promise<User> => {
 
 export const getUser = async (id: number): Promise<User | null> => {
   const userRepository = dataSource.getRepository(User);
-  const user = await userRepository.findOne({ where : {id}});
+  const user = await userRepository.findOne({ where: { id } });
   if (!user) return null;
   return user;
 };
@@ -51,15 +50,20 @@ export const registerUser = async (payload: {
   newUser.email = payload.email;
   newUser.username = payload.username;
   newUser.password = hashedPassword; //
- 
+
   return UserRepository.save(newUser); // Using UserRepository to save the new user
 };
 
-export const findUserByUsername = async (username: string): Promise<User | null> => {
+export const findUserByUsername = async (
+  username: string
+): Promise<User | null> => {
   return UserRepository.findOne({ where: { username } });
 };
 
-export const updateUserPassword = async (userId: number, newPassword: string): Promise<void> => {
+export const updateUserPassword = async (
+  userId: number,
+  newPassword: string
+): Promise<void> => {
   const user = await UserRepository.findOne({ where: { id: userId } });
   if (user) {
     user.password = await bcryptjs.hash(newPassword, 10);

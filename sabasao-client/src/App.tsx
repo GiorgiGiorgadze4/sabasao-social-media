@@ -44,7 +44,8 @@ const App: React.FC = () => {
     const loadPosts = async () => {
       try {
         const fetchedPosts = await fetchPosts();
-        setPosts(fetchedPosts);
+        console.log(fetchedPosts);
+        setPosts(fetchedPosts.reverse());
       } catch (error) {
         console.error("Error loading posts:", error);
       }
@@ -74,11 +75,18 @@ const App: React.FC = () => {
   };
 
   const handleCreatePost = async (title: string, content: string) => {
-    const newPostData: ICreatePostData = { title, content };
+    console.log("algorithm", user?.username);
+    const newPostData: ICreatePostData = {
+      title,
+      content,
+      username: user?.username, // Extract username correctly
+      createdAt: user?.updatedAt, // Set the current date/time as createdAt
+    };
     try {
       const createdPost = await createPost(newPostData, "ok");
       const updatedPosts = [createdPost, ...posts];
       setPosts(updatedPosts);
+      console.log("userDATA", user);
     } catch (error) {
       console.error("Error creating post:", error);
     }

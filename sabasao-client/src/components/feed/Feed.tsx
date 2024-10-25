@@ -28,14 +28,16 @@ const Feed: React.FC<{ posts: IPost[] }> = ({ posts }) => {
             ) : (
               "Unknown Author"
             )}
-          </div>
-          <div className={styles.postHeader}>
-            <h2 className={styles.postTitle}>{post.title}</h2>
             <span className={styles.postDate}>
               {new Date(post.createdAt).toLocaleDateString()}
             </span>
           </div>
+          <div className={styles.postHeader}>
+            <h2 className={styles.postTitle}>{post.title}</h2>
+          </div>
+
           <p className={styles.postContent}>{post.content}</p>
+          <img className={styles.image} src="/random.png"></img>
         </div>
       ))}
     </div>

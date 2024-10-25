@@ -1,10 +1,11 @@
-import {dataSource} from "../config/database";
+import { dataSource } from "../config/database";
 import { Post } from "../models";
 
 export interface IPostPayload {
   title: string;
   content: string;
   userId: number;
+  // username: string;::TODO:
 }
 
 export const getPosts = async (): Promise<Array<Post>> => {
@@ -23,7 +24,7 @@ export const createPost = async (payload: IPostPayload): Promise<Post> => {
 
 export const getPost = async (id: number): Promise<Post | null> => {
   const postRepository = dataSource.getRepository(Post);
-  const post = await postRepository.findOne({ where: {id} });
+  const post = await postRepository.findOne({ where: { id } });
   if (!post) return null;
   return post;
 };

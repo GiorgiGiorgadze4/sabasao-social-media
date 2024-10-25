@@ -1,52 +1,89 @@
 .feed {
   display: flex;
   flex-direction: column;
-  /* gap: 20px; */
-  padding: 20px; /* Padding around the feed */
+  padding: 20px;
   max-width: 800px;
-  margin: auto; /* Center the feed on the page */
+  margin: auto;
   width: 100%;
-}
-.author {
-  width: 10px;
-  height: 20px;
-}
-.post {
-  background-color: #fff; /* Background color of the post */
-  border: 1px solid #ddd; /* Border for the post */
-  border-radius: 10px; /* Rounded corners for the post */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Shadow effect */
-  padding: 20px; /* Padding inside the post */
-  transition: transform 0.2s, box-shadow 0.2s; /* Transition for hover effects */
-  width: 100%; /* Full width of the parent container */
-  overflow: hidden; /* Prevent overflow */
-}
+  height: max-content;
+  gap: 20px;
+  .userInfo {
+    margin-bottom: 20px;
+  }
 
-.post:hover {
-  transform: translateY(-2px); /* Slightly lift on hover */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
-}
+  .post {
+    position: relative;
 
-.postHeader {
-  display: flex; /* Flex layout for the header */
-  justify-content: space-between; /* Space between title and date */
-  align-items: center; /* Center align items */
-  margin-bottom: 10px; /* Space below the header */
-}
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 4px;
+    /* min-height: 0px; */
+    /* height: 200px; */
 
-.postTitle {
-  font-size: 1.6em; /* Increased font size */
-  color: #333; /* Dark color for title */
-  margin: 0; /* No margin for title */
-}
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
 
-.postDate {
-  font-size: 0.9em; /* Font size for date */
-  color: #999; /* Lighter color for date */
-}
+    .postHeader {
+      top: 20px;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-.postContent {
-  font-size: 1em; /* Font size for content */
-  color: #555; /* Color for content text */
-  line-height: 1.6; /* Increased line height for readability */
+      .postTitle {
+        font-size: 1.6em;
+        color: #333;
+        margin-bottom: 0px;
+      }
+    }
+    .image {
+      width: 90%;
+      max-width: 400px;
+      border-radius: 4px;
+      /* pointer-events: none; */
+    }
+    .postContent {
+      font-size: 1em;
+      color: #555;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0; /* Remove Bootstrap's default margin */
+      padding: 0; /* Remove any default padding */
+      width: 100%;
+      word-break: break-all;
+      /* text-align: center; */
+    }
+
+    .author {
+      /* width: 10px; */
+      /* position: relative; */
+      width: 100%;
+      /* left: 10px; */
+      height: 100%;
+      /* margin-bottom: 10px; */
+      z-index: 1;
+      color: black;
+      display: flex;
+      flex-direction: column;
+      /* align-self: flex-start; */
+      .postDate {
+        font-size: 0.9em;
+        color: #999;
+      }
+    }
+  }
 }
